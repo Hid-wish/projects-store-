@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ورشة المواقع | مشاريع تصميم مواقع جاهزة</title>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F3FF; --surface:#FFFFFF; --ink:#1E1236; --text2:#5B4F77; --line:#DED4F3;
+  --accent:#D61F69; --on-accent:#FFFFFF; --mint:#0E9F8E; --plum:#1B0F33; --plum2:#2C1A52;
+  --err:#C2410C; --glow:rgba(214,31,105,.22);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#140A26;--surface:#21143B;--ink:#F4EEFF;--text2:#B9ABDB;--line:#3A2A5E;--accent:#FF5C97;--on-accent:#1B0F33;--mint:#3DE0C5;--err:#FB923C;--glow:rgba(255,92,151,.25)}
+}
+:root[data-theme="dark"]{--bg:#140A26;--surface:#21143B;--ink:#F4EEFF;--text2:#B9ABDB;--line:#3A2A5E;--accent:#FF5C97;--on-accent:#1B0F33;--mint:#3DE0C5;--err:#FB923C;--glow:rgba(255,92,151,.25)}
+html{scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));scroll-behavior:smooth;height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:"Almarai",Tahoma,Arial,sans-serif;line-height:1.85}
+body.locked{overflow:hidden}
+h1,h2,h3{font-family:"Lalezar","Almarai",Tahoma,sans-serif;font-weight:400;line-height:1.3;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--mint);outline-offset:3px}
+button{font-family:inherit}
+
+/* ===== الأزرار ===== */
+.btn{font:inherit;font-weight:700;border:0;cursor:pointer;border-radius:12px;padding:11px 22px;text-decoration:none;display:inline-block;text-align:center;transition:transform .15s,box-shadow .2s}
+.btn-main{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 18px var(--glow)}
+.btn-main:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--accent)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.6;cursor:wait}
+
+/* ===== البوابة ===== */
+#gate{position:fixed;inset:0;z-index:100;overflow:hidden;display:grid;place-items:center;padding:env(safe-area-inset-top,0px) 20px env(safe-area-inset-bottom,0px)}
+#gate[hidden]{display:none}
+.door{position:absolute;top:0;bottom:0;width:50.4%;background:radial-gradient(120% 90% at 50% 0%,#3A2272 0%,var(--plum) 60%);transition:transform 1.15s cubic-bezier(.77,0,.18,1) .25s}
+.door-a{right:0}
+.door-b{left:0}
+.door-a::after,.door-b::after{content:"";position:absolute;top:0;bottom:0;width:3px;background:linear-gradient(#FF5C97,#3DE0C5)}
+.door-a::after{left:0}.door-b::after{right:0}
+#gate.open .door-a{transform:translateX(102%)}
+#gate.open .door-b{transform:translateX(-102%)}
+.gate-content{position:relative;z-index:2;text-align:center;color:#F4EEFF;max-width:640px;transition:opacity .45s,transform .6s}
+#gate.open .gate-content{opacity:0;transform:scale(1.12)}
+.g-logo{display:inline-flex;align-items:center;gap:10px;font-family:"Lalezar",sans-serif;font-size:1.4rem;margin-bottom:18px}
+.g-logo span{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FF5C97,#7C6CFF);display:grid;place-items:center;font-size:1.3rem}
+.gate-content h1{font-size:clamp(2.6rem,9vw,5rem);line-height:1.15}
+.gate-content p{color:#CFC2EE;font-size:1.1rem;max-width:34ch;margin:14px auto 30px}
+.enter{position:relative;font:inherit;font-family:"Lalezar",sans-serif;font-size:1.5rem;color:#1B0F33;background:linear-gradient(135deg,#FF8FB8,#FF5C97);border:0;border-radius:999px;padding:12px 42px;cursor:pointer;box-shadow:0 10px 30px rgba(255,92,151,.45)}
+.enter::before{content:"";position:absolute;inset:-8px;border-radius:999px;border:2px solid #3DE0C5;opacity:.7;animation:ring 2.2s ease-out infinite}
+.enter:hover{transform:scale(1.04)}
+@keyframes ring{0%{transform:scale(.94);opacity:.8}100%{transform:scale(1.18);opacity:0}}
+.g-hint{display:block;margin-top:22px;font-size:.9rem;color:#A596CC}
+.win{position:absolute;z-index:1;width:min(230px,42vw);aspect-ratio:4/3;border-radius:14px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.18);backdrop-filter:blur(2px);padding:10px;animation:float 7s ease-in-out infinite}
+.win i{display:inline-block;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);margin-inline-end:4px}
+.win b{display:block;height:34%;margin:12px 0 8px;border-radius:8px;background:var(--c)}
+.win u{display:block;height:7px;border-radius:4px;background:rgba(255,255,255,.22);margin:6px 0;width:80%}
+.win u+u{width:52%}
+.w1{top:9%;right:5%;--c:#FF7A45;transform:rotate(6deg)}
+.w2{bottom:10%;left:5%;--c:#3DE0C5;transform:rotate(-7deg);animation-delay:-2.5s}
+.w3{top:14%;left:9%;--c:#7C6CFF;transform:rotate(-4deg);animation-delay:-4.5s;width:min(170px,32vw)}
+.w4{bottom:12%;right:9%;--c:#FF5C97;transform:rotate(5deg);animation-delay:-1s;width:min(170px,32vw)}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -14px}}
+
+/* ===== شريط التطبيق ===== */
+.appbar{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:2px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.appbar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font-family:"Lalezar",sans-serif;font-size:1.35rem;color:var(--ink);text-decoration:none}
+.brand span{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#FF5C97,#7C6CFF);display:grid;place-items:center;color:#fff;font-size:1.2rem}
+.bar-links{display:flex;align-items:center;gap:6px}
+.bar-links a{color:var(--text2);text-decoration:none;font-weight:700;font-size:.95rem;padding:6px 12px;border-radius:10px}
+.bar-links a:hover{color:var(--ink);background:var(--surface)}
+.iconbtn{width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;font-size:1.1rem}
+
+/* ===== الواجهة الرئيسية ===== */
+.hero{padding:56px 0 34px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:center}
+.hero h2{font-size:clamp(2.2rem,6vw,3.8rem)}
+.hero p{color:var(--text2);max-width:46ch;font-size:1.05rem;margin:14px 0 24px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:10px}
+.stack{position:relative;height:300px;max-width:420px;width:100%;margin-inline:auto}
+.stack .mini{position:absolute;width:74%;border-radius:16px;background:var(--surface);border:2px solid var(--ink);box-shadow:8px 10px 0 var(--ink);overflow:hidden}
+.stack .m1{top:0;right:0;transform:rotate(3deg)}
+.stack .m2{top:70px;left:0;transform:rotate(-4deg)}
+.stack .m3{bottom:0;right:10%;transform:rotate(1.5deg)}
+.mini .mb{display:flex;gap:5px;padding:8px 12px;border-bottom:2px solid var(--ink)}
+.mini .mb i{width:8px;height:8px;border-radius:50%;background:var(--ink);opacity:.35}
+.mini .mh{height:62px;background:var(--c)}
+.mini .ml{height:8px;border-radius:4px;background:var(--line);margin:9px 12px;width:70%}
+.mini .ml+.ml{width:44%}
+
+.how{padding:26px 0 10px}
+.how ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:s}
+.how li{counter-increment:s;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;gap:12px;align-items:flex-start;font-weight:700}
+.how li::before{content:counter(s);flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:"Lalezar",sans-serif;font-size:1.1rem}
+
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:40px 0 20px}
+.toolbar h2{font-size:2rem}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-weight:700;font-size:.92rem;padding:6px 18px;border-radius:999px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px;padding-bottom:56px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;transition:transform .2s,border-color .2s,box-shadow .2s}
+.card:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 14px 30px -12px var(--c)}
+.shot{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,var(--surface)),var(--surface));padding:18px 18px 0;height:160px}
+.shot .win2{background:var(--surface);border:2px solid var(--ink);border-bottom:0;border-radius:12px 12px 0 0;height:100%;overflow:hidden}
+.win2 .mb{display:flex;gap:5px;padding:7px 10px;border-bottom:2px solid var(--ink)}
+.win2 .mb i{width:8px;height:8px;border-radius:50%;background:var(--ink);opacity:.35}
+.win2 .mh{height:46px;background:var(--c);display:grid;place-items:center;color:#fff;font-family:"Lalezar",sans-serif;font-size:1.2rem}
+.win2 .ml{height:7px;border-radius:4px;background:var(--line);margin:8px 12px;width:72%}
+.win2 .ml+.ml{width:46%}
+.info{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tag{align-self:flex-start;font-size:.78rem;font-weight:800;padding:1px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--ink);border:1.5px solid var(--c)}
+.card h3{font-size:1.4rem}
+.card p{margin:0;color:var(--text2);font-size:.94rem}
+.buy{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.price{font-family:"Lalezar",sans-serif;font-size:1.5rem}
+.price small{font-family:"Almarai",sans-serif;font-size:.85rem;color:var(--text2)}
+
+/* ===== النوافذ ===== */
+dialog{border:2px solid var(--ink);border-radius:18px;padding:0;background:var(--surface);color:var(--ink);width:min(470px,92vw);max-height:90vh}
+dialog::backdrop{background:rgba(16,8,34,.65);backdrop-filter:blur(3px)}
+.dform{padding:24px;display:grid;gap:12px}
+.dform h2{font-size:1.6rem}
+.pay{background:var(--bg);border:2px dashed var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:6px;font-size:.95rem}
+.pay div{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.pay b{font-weight:700;color:var(--text2)}
+.pay span{font-weight:800;word-break:break-all;direction:ltr;text-align:left}
+.copy{font:inherit;font-size:.8rem;border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:0 10px;cursor:pointer}
+label{display:grid;gap:4px;font-size:.92rem;font-weight:700}
+input{font:inherit;padding:10px 12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.note{font-size:.9rem;color:var(--text2);margin:0}
+.row{display:flex;gap:10px;margin-top:4px;flex-wrap:wrap}
+.err{color:var(--err);font-size:.9rem;min-height:1.2em;margin:0;font-weight:700}
+dialog.prev{width:100vw;max-width:100vw;height:100vh;max-height:100vh;border:0;border-radius:0;padding:0;background:var(--bg)}
+dialog.prev .pbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 14px;padding-top:calc(8px + env(safe-area-inset-top,0px));background:var(--plum);color:#F4EEFF}
+dialog.prev iframe{width:100%;height:calc(100% - 56px - env(safe-area-inset-top,0px));border:0;background:#fff;display:block}
+
+/* ===== الذيل ===== */
+.site-foot{background:var(--plum);color:#D9CEF2;margin-top:20px;padding-bottom:env(safe-area-inset-bottom,0px)}
+.site-foot .top{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:32px;padding:44px 0 30px}
+.site-foot .brand{color:#fff;margin-bottom:10px}
+.site-foot h3{color:#fff;font-size:1.2rem;margin-bottom:10px}
+.site-foot p{margin:0;font-size:.94rem;max-width:36ch}
+.site-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.site-foot a{color:#D9CEF2;text-decoration:none}
+.site-foot a:hover{color:#FF8FB8}
+.pay-badge{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:999px;border:1.5px solid #3DE0C5;color:#3DE0C5;font-weight:700;font-size:.88rem}
+.site-foot .bottom{border-top:1px solid #3A2A5E;padding:16px 0;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:.88rem;color:#A596CC}
+.up{font:inherit;background:transparent;border:1.5px solid #5B4A8A;color:#D9CEF2;border-radius:999px;padding:3px 14px;cursor:pointer}
+.up:hover{border-color:#FF8FB8;color:#FF8FB8}
+
+/* ===== رسالة الترحيب ===== */
+#toast{position:fixed;inset-inline:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));margin-inline:auto;width:max-content;max-width:calc(100% - 32px);z-index:60;background:var(--plum);color:#fff;border-radius:14px;padding:12px 20px;font-weight:700;border:2px solid #3DE0C5;transform:translateY(160%);transition:transform .5s cubic-bezier(.2,.9,.3,1.2)}
+#toast.show{transform:none}
+
+@media (max-width:820px){
+  .hero .wrap{grid-template-columns:1fr}
+  .stack{height:250px;order:-1}
+  .how ol{grid-template-columns:1fr}
+  .bar-links a{display:none}
+  .site-foot .top{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body class="locked">
+
+<!-- البوابة -->
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+  <div class="door door-a"></div><div class="door door-b"></div>
+  <div class="win w1" aria-hidden="true"><i></i><i></i><i></i><b></b><u></u><u></u></div>
+  <div class="win w2" aria-hidden="true"><i></i><i></i><i></i><b></b><u></u><u></u></div>
+  <div class="win w3" aria-hidden="true"><i></i><i></i><i></i><b></b><u></u><u></u></div>
+  <div class="win w4" aria-hidden="true"><i></i><i></i><i></i><b></b><u></u><u></u></div>
+  <div class="gate-content">
+    <div class="g-logo"><span>◐</span>ورشة المواقع</div>
+    <h1 id="gateTitle">أهلًا بك في ورشة المواقع</h1>
+    <p>مشاريع تصميم مواقع جاهزة. عاين المشروع كاملًا قبل أن تشتريه.</p>
+    <button class="enter" id="enterBtn" type="button">افتح البوابة</button>
+    <span class="g-hint">اضغط الزر لتدخل المتجر</span>
+  </div>
+</div>
+
+<div id="app" inert>
+  <header class="appbar">
+    <div class="wrap">
+      <a class="brand" href="#top"><span>◐</span>ورشة المواقع</a>
+      <nav class="bar-links" aria-label="التنقل">
+        <a href="#how">طريقة الشراء</a>
+        <a href="#projects">المشاريع</a>
+        <a href="#contact">تواصل</a>
+        <button class="iconbtn" id="themeBtn" type="button" aria-label="تبديل الوضع الليلي">☾</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="wrap">
+      <div>
+        <h2>موقعك القادم جاهز، وما عليك إلا أن تبدأ</h2>
+        <p>مشاريع تصميم مواقع عربية كاملة بالكود، سعر كل مشروع <strong id="priceTop"></strong> ريال سعودي. عاينه كأنك زائر، ثم حمّله وعدّل عليه ما تشاء.</p>
+        <div class="cta">
+          <a class="btn btn-main" href="#projects">تصفح المشاريع</a>
+          <a class="btn btn-ghost" href="#how">كيف أشتري؟</a>
+        </div>
+      </div>
+      <div class="stack" aria-hidden="true">
+        <div class="mini m1" style="--c:#FF7A45"><div class="mb"><i></i><i></i><i></i></div><div class="mh"></div><div class="ml"></div><div class="ml"></div></div>
+        <div class="mini m2" style="--c:#7C6CFF"><div class="mb"><i></i><i></i><i></i></div><div class="mh"></div><div class="ml"></div><div class="ml"></div></div>
+        <div class="mini m3" style="--c:#12B5A6"><div class="mb"><i></i><i></i><i></i></div><div class="mh"></div><div class="ml"></div><div class="ml"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" id="how">
+    <div class="wrap">
+      <ol>
+        <li>اختر المشروع وعاينه، ثم اضغط «شراء المشروع»</li>
+        <li>حوّل المبلغ عبر حساب الكريمي</li>
+        <li>أرسل اسمك وبريدك ورقم الحوالة، فيصلك رابط التحميل</li>
+      </ol>
+    </div>
+  </section>
+
+  <main class="wrap" id="projects">
+    <div class="toolbar">
+      <h2>المشاريع المتاحة</h2>
+      <div class="filters" id="filters" role="group" aria-label="تصفية المشاريع"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer class="site-foot" id="contact">
+    <div class="wrap">
+      <div class="top">
+        <div>
+          <a class="brand" href="#top"><span>◐</span>ورشة المواقع</a>
+          <p>متجر مشاريع تصميم مواقع عربية جاهزة، كل مشروع بكود نظيف تعدل عليه وتنشره باسمك.</p>
+        </div>
+        <div>
+          <h3>روابط سريعة</h3>
+          <ul>
+            <li><a href="#projects">المشاريع المتاحة</a></li>
+            <li><a href="#how">طريقة الشراء</a></li>
+            <li><a href="#top">الصفحة الرئيسية</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3>الدفع والتواصل</h3>
+          <p>تأكيد الدفع يتم يدويًا من صاحب المتجر، ويصلك رابط التحميل على بريدك بعد التأكد من الحوالة.</p>
+          <span class="pay-badge" id="footPay"></span>
+        </div>
+      </div>
+      <div class="bottom">
+        <span>© <span id="yr"></span> ورشة المواقع. جميع الحقوق محفوظة.</span>
+        <button class="up" id="upBtn" type="button">العودة للأعلى</button>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="dlg">
+    <div class="dform">
+      <h2 id="dlgTitle"></h2>
+      <p class="note">1) حوّل <strong id="dlgPrice"></strong> ريال سعودي عبر:</p>
+      <div class="pay" id="payBox"></div>
+      <p class="note">2) املأ بياناتك ثم أرسل الطلب، وسيصلك رابط التحميل على بريدك بعد تأكيد الحوالة.</p>
+      <label>اسمك<input id="bName" maxlength="60" autocomplete="name"></label>
+      <label>بريدك الإلكتروني (يصلك عليه رابط التحميل)<input id="bMail" type="email" maxlength="80" dir="ltr" autocomplete="email"></label>
+      <label>رقم الحوالة أو آخر 4 أرقام من الإيصال<input id="bRef" maxlength="40" dir="ltr"></label>
+      <p class="err" id="err" role="alert"></p>
+      <p class="note" id="okMsg" style="color:var(--mint);font-weight:800" role="status"></p>
+      <div class="row">
+        <button class="btn btn-main" id="sendBtn" type="button">إرسال الطلب</button>
+        <button class="btn btn-ghost" id="cancelBtn" type="button">إلغاء</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="prev" id="prevDlg" aria-label="معاينة المشروع">
+    <div class="pbar"><strong id="prevTitle"></strong><button class="btn btn-main" id="prevClose" type="button" style="padding:6px 16px">إغلاق المعاينة</button></div>
+    <iframe id="prevFrame" title="معاينة المشروع"></iframe>
+  </dialog>
+</div>
+
+<div id="toast" role="status"></div>
+
+<script>
+/* ====== عدّل هذه البيانات فقط ====== */
+var CONFIG = {
+  price: 50,                         // سعر كل مشروع بالريال السعودي
+  formId: "",                        // المعرّف السري من FormSubmit (يخفي بريدك). إذا تركته فارغًا يُستخدم البريد أدناه
+  email: "Amaleenalymany@gmail.com", // بريدك: احذفه بعد وضع formId حتى لا يظهر في كود الصفحة
+  payment: {
+    method: "حساب الكريمي"
+  },
+  projects: [
+    {id:1,preview:"restaurant.html",title:"موقع مطعم",tag:"موقع تعريفي",desc:"موقع مطعم كامل: قائمة طعام بتبويبات، مواعيد العمل، ونموذج حجز طاولة.",color:"#E8571F"},
+    {id:2,preview:"shop.html",title:"متجر ملابس",tag:"متجر إلكتروني",desc:"متجر ملابس: تصفية المنتجات، سلة مشتريات تحسب المجموع، وإتمام الطلب.",color:"#D61F69"},
+    {id:3,preview:"blog.html",title:"مدونة شخصية",tag:"مدونة",desc:"مدونة: بحث وتصنيفات ونافذة لقراءة المقال، بخط عربي مريح للقراءة.",color:"#0E9F8E"},
+    {id:4,preview:"school.html",title:"موقع مدرسة",tag:"موقع تعريفي",desc:"موقع مدرسة: أخبار، جدول أسبوعي لكل صف، المعلمون، ونموذج تواصل.",color:"#6B5CE7"},
+    {id:5,preview:"clinic.html",title:"عيادة أسنان",tag:"موقع تعريفي",desc:"موقع عيادة: خدمات بتبويبات وأسعارها، الأطباء، ونموذج حجز موعد.",color:"#0F8F83"},
+    {id:6,preview:"gym.html",title:"نادي رياضي",tag:"موقع تعريفي",desc:"موقع نادي: باقات بتبديل شهري وسنوي، جدول الحصص، ونموذج اشتراك.",color:"#7A9A00"},
+    {id:7,preview:"portfolio.html",title:"معرض أعمال",tag:"معرض أعمال",desc:"معرض شخصي لمصمم: تصفية الأعمال، نافذة تفاصيل لكل عمل، ونبذة وتواصل.",color:"#C2410C"},
+    {id:8,preview:"app.html",title:"صفحة هبوط لتطبيق",tag:"صفحة هبوط",desc:"صفحة تسويقية لتطبيق: مزايا، أسئلة شائعة بالطي والفتح، وتسجيل بريد.",color:"#5B4BFF"}
+  ]
+};
+/* ================================= */
+
+(function(){
+  var filter='الكل', current=null;
+  var $=function(id){return document.getElementById(id);};
+  var grid=$('grid'), filters=$('filters'), dlg=$('dlg'), gate=$('gate'), app=$('app'), toast=$('toast');
+  $('priceTop').textContent=CONFIG.price;
+  $('footPay').textContent=CONFIG.payment.method;
+  $('yr').textContent=new Date().getFullYear();
+
+  function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+  /* ----- الوضع الليلي ----- */
+  var root=document.documentElement, themeBtn=$('themeBtn');
+  function isDark(){
+    var t=root.getAttribute('data-theme');
+    return t? t==='dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function paintTheme(){ themeBtn.textContent=isDark()?'☀':'☾'; }
+  try{ var saved=localStorage.getItem('ws-theme'); if(saved) root.setAttribute('data-theme',saved); }catch(e){}
+  paintTheme();
+  themeBtn.addEventListener('click',function(){
+    var next=isDark()?'light':'dark';
+    root.setAttribute('data-theme',next);
+    try{localStorage.setItem('ws-theme',next);}catch(e){}
+    paintTheme();
+  });
+
+  /* ----- البوابة ----- */
+  var opening=false;
+  function showToast(msg){
+    toast.textContent=msg; toast.classList.add('show');
+    setTimeout(function(){toast.classList.remove('show');},3600);
+  }
+  function unlock(withWelcome){
+    gate.hidden=true; document.body.classList.remove('locked'); app.removeAttribute('inert');
+    if(withWelcome) showToast('أهلًا بك! اختر مشروعك وعاينه قبل الشراء.');
+  }
+  function openGate(){
+    if(opening) return; opening=true;
+    try{sessionStorage.setItem('ws-in','1');}catch(e){}
+    gate.classList.add('open');
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function(){ unlock(true); },reduce?30:1500);
+  }
+  $('enterBtn').addEventListener('click',openGate);
+  var seen=false; try{seen=sessionStorage.getItem('ws-in')==='1';}catch(e){}
+  if(seen){ unlock(false); } else { setTimeout(function(){ $('enterBtn').focus(); },50); }
+
+  /* ----- المشاريع ----- */
+  function renderFilters(){
+    var tags=['الكل'];
+    CONFIG.projects.forEach(function(p){ if(tags.indexOf(p.tag)<0) tags.push(p.tag); });
+    filters.innerHTML=tags.map(function(t){
+      return '<button class="chip" aria-pressed="'+(t===filter)+'" data-tag="'+esc(t)+'">'+esc(t)+'</button>';
+    }).join('');
+  }
+  function render(){
+    renderFilters();
+    var list=CONFIG.projects.filter(function(p){return filter==='الكل'||p.tag===filter;});
+    grid.innerHTML=list.map(function(p){
+      return '<article class="card" style="--c:'+esc(p.color)+'">'+
+        '<div class="shot"><div class="win2"><div class="mb"><i></i><i></i><i></i></div><div class="mh">'+esc(p.title)+'</div><div class="ml"></div><div class="ml"></div></div></div>'+
+        '<div class="info"><span class="tag">'+esc(p.tag)+'</span><h3>'+esc(p.title)+'</h3><p>'+esc(p.desc)+'</p>'+
+        '<div class="buy"><div class="price">'+CONFIG.price+' <small>ريال</small></div>'+
+        '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost" style="padding:8px 14px;font-size:.9rem" data-prev="'+p.id+'">معاينة</button>'+
+        '<button class="btn btn-main" style="padding:8px 16px;font-size:.9rem" data-buy="'+p.id+'">شراء المشروع</button></div></div></div></article>';
+    }).join('');
+  }
+  filters.addEventListener('click',function(e){
+    var b=e.target.closest('[data-tag]'); if(!b) return; filter=b.getAttribute('data-tag'); render();
+  });
+  grid.addEventListener('click',function(e){
+    var b=e.target.closest('[data-buy]'); if(!b) return;
+    var id=+b.getAttribute('data-buy');
+    current=CONFIG.projects.filter(function(p){return p.id===id;})[0];
+    openBuy();
+  });
+
+  function openBuy(){
+    $('dlgTitle').textContent='شراء: '+current.title;
+    $('dlgPrice').textContent=CONFIG.price;
+    var html='<div><b>طريقة الدفع</b><span style="direction:rtl">'+esc(CONFIG.payment.method)+'</span></div>';
+    $('payBox').innerHTML=html;
+    $('err').textContent='';
+    dlg.showModal();
+  }
+  $('cancelBtn').addEventListener('click',function(){dlg.close();});
+  var sendBtn=$('sendBtn');
+  sendBtn.addEventListener('click',function(){
+    var name=$('bName').value.trim();
+    var mail=$('bMail').value.trim();
+    var ref=$('bRef').value.trim();
+    var err=$('err'), ok=$('okMsg');
+    err.textContent=''; ok.textContent='';
+    if(!name){ err.textContent='اكتب اسمك أولًا.'; return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){ err.textContent='اكتب بريدًا إلكترونيًا صحيحًا.'; return; }
+    if(!ref){ err.textContent='اكتب رقم الحوالة أو آخر 4 أرقام من الإيصال.'; return; }
+    sendBtn.disabled=true; sendBtn.textContent='جارٍ الإرسال...';
+    fetch('https://formsubmit.co/ajax/'+encodeURIComponent(CONFIG.formId||CONFIG.email),{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        _subject:'طلب شراء مشروع: '+current.title,
+        _template:'table',
+        _captcha:'false',
+        email:mail,
+        'المشروع':current.title,
+        'المبلغ':CONFIG.price+' ريال',
+        'اسم المشتري':name,
+        'بريد المشتري':mail,
+        'رقم الحوالة':ref
+      })
+    }).then(function(r){ if(!r.ok) throw new Error('fail'); return r.json(); })
+    .then(function(){
+      ok.textContent='تم إرسال طلبك. سيصلك رابط التحميل على بريدك بعد التأكد من الحوالة.';
+      sendBtn.textContent='تم الإرسال';
+      $('bName').value='';$('bMail').value='';$('bRef').value='';
+      setTimeout(function(){dlg.close();sendBtn.disabled=false;sendBtn.textContent='إرسال الطلب';ok.textContent='';},3500);
+    })
+    .catch(function(){
+      err.textContent='تعذر الإرسال المباشر. تحقق من الاتصال وحاول مرة أخرى.';
+      sendBtn.disabled=false; sendBtn.textContent='إرسال الطلب';
+    });
+  });
+
+  $('upBtn').addEventListener('click',function(){window.scrollTo({top:0});});
+
+  var PREVIEWS = {"1": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>مطعم بيت الطعم<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--green:#12372A;--green2:#1D5A43;--saffron:#E9A23B;--mist:#EEF3EE;--ink:#10231B}\n*{box-sizing:border-box}\nbody{margin:0;font-family:Tajawal,Tahoma,sans-serif;color:var(--ink);background:var(--mist);line-height:1.8}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0;line-height:1.3}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nheader.top{background:var(--green);color:#fff}\nnav{display:flex;align-items:center;justify-content:space-between;padding:16px 0}\nnav b{font-family:\"Readex Pro\",sans-serif;font-size:1.3rem}\nnav a{color:#fff;text-decoration:none;margin-inline-start:18px;opacity:.9}\nnav a:hover{color:var(--saffron)}\n.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;padding:40px 0 60px}\n.hero h1{font-size:clamp(2.2rem,6vw,3.8rem)}\n.hero p{max-width:44ch;opacity:.9;margin:14px 0 24px}\n.btn{display:inline-block;background:var(--saffron);color:var(--green);font-family:\"Readex Pro\",sans-serif;font-weight:600;border:0;border-radius:10px;padding:12px 24px;text-decoration:none;cursor:pointer;font-size:1rem}\n.plate{width:min(300px,70vw);aspect-ratio:1;margin:auto;border-radius:50%;background:radial-gradient(circle,var(--saffron) 0 18%,#f7efe0 18% 40%,#fff 40% 62%,#d9e4dc 62% 70%,#fff 70%);box-shadow:0 0 0 10px var(--green2),0 20px 40px rgba(0,0,0,.35);position:relative}\n.plate::after{content:\"\";position:absolute;inset:34%;border-radius:50%;border:3px dashed var(--green2);opacity:.5}\nsection{padding:46px 0}\nsection h2{font-size:1.8rem;margin-bottom:18px}\n.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}\n.tab{font:inherit;border:2px solid var(--green);background:transparent;color:var(--green);border-radius:999px;padding:6px 18px;cursor:pointer}\n.tab[aria-pressed=\"true\"]{background:var(--green);color:#fff}\n.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}\n.item{background:#fff;border-radius:12px;padding:16px;border-inline-start:6px solid var(--saffron);display:grid;gap:4px}\n.item .r{display:flex;justify-content:space-between;gap:10px}\n.item h3{font-size:1.05rem}.item .p{font-weight:700;color:var(--green2);white-space:nowrap}\n.item p{margin:0;font-size:.92rem;color:#4a5f55}\n.info{display:grid;grid-template-columns:1fr 1fr;gap:20px}\n.box{background:var(--green);color:#fff;border-radius:14px;padding:22px}\n.box table{width:100%;border-collapse:collapse}.box td{padding:5px 0;border-bottom:1px solid rgba(255,255,255,.18)}\nform{background:#fff;border-radius:14px;padding:22px;display:grid;gap:10px}\nlabel{display:grid;gap:4px;font-weight:500;font-size:.92rem}\ninput,select{font:inherit;padding:9px 12px;border:2px solid #cfdcd3;border-radius:8px;width:100%}\n.ok{color:var(--green2);font-weight:700;margin:0;min-height:1.4em}\nfooter{background:var(--green);color:#fff;text-align:center;padding:20px;font-size:.9rem}\n@media(max-width:760px){.hero,.info{grid-template-columns:1fr}.plate{order:-1;width:200px}nav a{margin-inline-start:10px;font-size:.9rem}}\n<\/style>\n<\/head>\n<body>\n<header class=\"top\"><div class=\"wrap\">\n  <nav><b>بيت الطعم<\/b><div><a href=\"#menu\">القائمة<\/a><a href=\"#hours\">المواعيد<\/a><a href=\"#book\">الحجز<\/a><\/div><\/nav>\n  <div class=\"hero\">\n    <div><h1>أكلات بيتية بنكهة الأصل<\/h1><p>نطبخ كل يوم من مكونات طازجة، ونقدم لك الأطباق الشعبية كما تعودت عليها.<\/p><a class=\"btn\" href=\"#book\">احجز طاولتك<\/a><\/div>\n    <div class=\"plate\" aria-hidden=\"true\"><\/div>\n  <\/div>\n<\/div><\/header>\n\n<section id=\"menu\"><div class=\"wrap\">\n  <h2>قائمة الطعام<\/h2>\n  <div class=\"tabs\" id=\"tabs\"><\/div>\n  <div class=\"menu\" id=\"menu-list\"><\/div>\n<\/div><\/section>\n\n<section id=\"hours\" style=\"background:#fff\"><div class=\"wrap info\">\n  <div class=\"box\"><h2>مواعيد العمل<\/h2>\n    <table><tr><td>السبت - الأربعاء<\/td><td>12 ظهرًا - 11 مساءً<\/td><\/tr><tr><td>الخميس<\/td><td>12 ظهرًا - 1 صباحًا<\/td><\/tr><tr><td>الجمعة<\/td><td>2 ظهرًا - 1 صباحًا<\/td><\/tr><\/table>\n  <\/div>\n  <div class=\"box\" style=\"background:var(--green2)\"><h2>تواصل معنا<\/h2><p>العنوان: شارع الملك فهد، الرياض<br>الهاتف: 0500000000<br>البريد: hello@baytaam.example<\/p><\/div>\n<\/div><\/section>\n\n<section id=\"book\"><div class=\"wrap\">\n  <h2>احجز طاولة<\/h2>\n  <form id=\"bookForm\">\n    <label>الاسم<input id=\"n\" required><\/label>\n    <label>عدد الأشخاص<select id=\"c\"><option>2<\/option><option>4<\/option><option>6<\/option><option>8 أو أكثر<\/option><\/select><\/label>\n    <label>التاريخ والوقت<input id=\"d\" type=\"datetime-local\" required><\/label>\n    <button class=\"btn\" type=\"submit\">تأكيد الحجز<\/button>\n    <p class=\"ok\" id=\"ok\" role=\"status\"><\/p>\n  <\/form>\n<\/div><\/section>\n<footer>© بيت الطعم — جميع الحقوق محفوظة<\/footer>\n\n<script>\nvar menu={\n \"الرئيسية\":[[\"كبسة لحم\",\"أرز بسمتي مع لحم طري وبهارات خاصة\",38],[\"مندي دجاج\",\"دجاج مدخن على الفحم مع أرز\",32],[\"مضبي\",\"لحم مشوي على الحجر مع صلصة الطماطم\",45],[\"سمك مشوي\",\"سمك طازج مع أرز وسلطة\",40]],\n \"المقبلات\":[[\"حمص\",\"حمص بالطحينة وزيت الزيتون\",12],[\"متبل\",\"باذنجان مشوي مع الثوم\",12],[\"سمبوسة\",\"ست قطع بحشوة اللحم\",14],[\"شوربة عدس\",\"تقدم مع الليمون والخبز\",10]],\n \"الحلويات\":[[\"كنافة\",\"بالجبن والقطر الساخن\",18],[\"أم علي\",\"بالمكسرات والحليب\",16],[\"مهلبية\",\"بماء الورد والفستق\",12]],\n \"المشروبات\":[[\"شاي كرك\",\"شاي بالحليب والهيل\",6],[\"قهوة عربية\",\"بالهيل والزعفران\",8],[\"عصير ليمون بالنعناع\",\"طازج ومثلج\",12]]\n};\nvar cur=Object.keys(menu)[0];\nfunction show(){\n  document.getElementById('tabs').innerHTML=Object.keys(menu).map(function(k){return '<button class=\"tab\" aria-pressed=\"'+(k===cur)+'\" data-k=\"'+k+'\">'+k+'<\/button>';}).join('');\n  document.getElementById('menu-list').innerHTML=menu[cur].map(function(i){return '<div class=\"item\"><div class=\"r\"><h3>'+i[0]+'<\/h3><span class=\"p\">'+i[2]+' ريال<\/span><\/div><p>'+i[1]+'<\/p><\/div>';}).join('');\n}\ndocument.getElementById('tabs').addEventListener('click',function(e){var b=e.target.closest('[data-k]');if(b){cur=b.dataset.k;show();}});\ndocument.getElementById('bookForm').addEventListener('submit',function(e){\n  e.preventDefault();\n  document.getElementById('ok').textContent='شكرًا '+document.getElementById('n').value+'، تم استلام طلب الحجز لـ '+document.getElementById('c').value+' أشخاص وسنتصل بك للتأكيد.';\n  this.reset();\n});\nshow();\n<\/script>\n<\/body>\n<\/html>\n", "2": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>متجر خيط للملابس<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--ink:#1B1633;--lilac:#B9A6FF;--soft:#F4F1FF;--pink:#FF6F91;--line:#E1DAF7}\n*{box-sizing:border-box}\nbody{margin:0;font-family:\"IBM Plex Sans Arabic\",Tahoma,sans-serif;color:var(--ink);background:#fff;line-height:1.7}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nheader{position:sticky;top:0;background:#fff;border-bottom:2px solid var(--ink);z-index:5}\nheader .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 20px}\n.logo{font-family:\"Readex Pro\",sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:-1px}\n.logo i{color:var(--pink);font-style:normal}\n.cartbtn{font:inherit;font-weight:600;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:8px 18px;cursor:pointer}\n.cartbtn span{background:var(--pink);border-radius:999px;padding:0 8px;margin-inline-start:6px}\n.hero{background:var(--soft);padding:44px 0}\n.hero h1{font-size:clamp(2rem,6vw,3.4rem);max-width:14ch}\n.hero p{max-width:46ch;color:#4b4568}\n.chips{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 18px}\n.chip{font:inherit;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:999px;padding:5px 18px;cursor:pointer}\n.chip[aria-pressed=\"true\"]{background:var(--ink);color:#fff}\n.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;padding-bottom:50px}\n.prod{border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;display:flex;flex-direction:column}\n.pic{height:160px;display:grid;place-items:center}\n.pic svg{width:90px;fill:#fff;stroke:var(--ink);stroke-width:1.5}\n.pb{padding:12px 14px;display:grid;gap:4px;flex:1}\n.pb h3{font-size:1rem}.pb small{color:#6b6490}\n.pr{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:6px}\n.pr b{font-family:\"Readex Pro\",sans-serif}\n.add{font:inherit;font-weight:600;background:var(--lilac);border:2px solid var(--ink);border-radius:8px;padding:3px 12px;cursor:pointer}\n.drawer{position:fixed;inset-block:0;inset-inline-start:0;width:min(380px,100%);background:#fff;border-inline-end:2px solid var(--ink);transform:translateX(-102%);transition:transform .25s;z-index:20;display:flex;flex-direction:column}\n.drawer.open{transform:none}\n.drawer header{position:static;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}\n.lines{flex:1;overflow:auto;padding:10px 18px;display:grid;gap:10px;align-content:start}\n.line{display:grid;grid-template-columns:1fr auto;gap:4px;border-bottom:1px solid var(--line);padding-bottom:8px}\n.qty button{width:26px;height:26px;border:2px solid var(--ink);background:#fff;border-radius:6px;cursor:pointer;font-weight:700}\n.qty span{margin:0 8px}\n.foot{padding:16px 18px;border-top:2px solid var(--ink);display:grid;gap:10px}\n.foot .t{display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem}\n.pay{font:inherit;font-weight:600;background:var(--ink);color:#fff;border:0;border-radius:10px;padding:12px;cursor:pointer}\n.msg{color:#0f766e;font-weight:600;margin:0;min-height:1.4em}\n.veil{position:fixed;inset:0;background:rgba(27,22,51,.5);display:none;z-index:10}.veil.open{display:block}\nfooter{background:var(--ink);color:#fff;text-align:center;padding:20px;font-size:.9rem}\n<\/style>\n<\/head>\n<body>\n<header><div class=\"wrap\"><div class=\"logo\">خيط<i>.<\/i><\/div><button class=\"cartbtn\" id=\"openCart\">السلة<span id=\"count\">0<\/span><\/button><\/div><\/header>\n<section class=\"hero\"><div class=\"wrap\"><h1>ملابس يومية بتفصيل مريح<\/h1><p>قطع بسيطة بألوان هادئة، تناسب العمل والمشاوير. الشحن مجاني للطلبات فوق 300 ريال.<\/p><\/div><\/section>\n<main class=\"wrap\">\n  <div class=\"chips\" id=\"chips\"><\/div>\n  <div class=\"grid\" id=\"grid\"><\/div>\n<\/main>\n<footer>© خيط — متجر تجريبي<\/footer>\n\n<div class=\"veil\" id=\"veil\"><\/div>\n<aside class=\"drawer\" id=\"drawer\" aria-label=\"سلة المشتريات\">\n  <header><h2>سلتك<\/h2><button class=\"add\" id=\"closeCart\">إغلاق<\/button><\/header>\n  <div class=\"lines\" id=\"lines\"><\/div>\n  <div class=\"foot\"><div class=\"t\"><span>المجموع<\/span><span id=\"total\">0 ريال<\/span><\/div><button class=\"pay\" id=\"pay\">إتمام الطلب<\/button><p class=\"msg\" id=\"msg\" role=\"status\"><\/p><\/div>\n<\/aside>\n\n<script>\nvar products=[\n {id:1,n:\"قميص قطن أبيض\",c:\"رجالي\",p:89,col:\"#B9A6FF\"},{id:2,n:\"قميص كتان\",c:\"رجالي\",p:119,col:\"#7FD1AE\"},\n {id:3,n:\"بلوزة واسعة\",c:\"نسائي\",p:99,col:\"#FF6F91\"},{id:4,n:\"قميص مخطط\",c:\"نسائي\",p:109,col:\"#FFD166\"},\n {id:5,n:\"تيشيرت أطفال\",c:\"أطفال\",p:49,col:\"#6FC3FF\"},{id:6,n:\"قميص مدرسي\",c:\"أطفال\",p:59,col:\"#C4B5FD\"},\n {id:7,n:\"قميص بولو\",c:\"رجالي\",p:95,col:\"#FDA4AF\"},{id:8,n:\"بلوزة صيفية\",c:\"نسائي\",p:85,col:\"#86EFAC\"}\n];\nvar cart={}, filter=\"الكل\";\nvar shirt='<svg viewBox=\"0 0 40 32\"><path d=\"M14 2 L4 7 L8 14 L12 12 L12 30 L28 30 L28 12 L32 14 L36 7 L26 2 C25 5 22 6 20 6 C18 6 15 5 14 2 Z\"/><\/svg>';\nfunction chips(){\n  var cs=[\"الكل\",\"رجالي\",\"نسائي\",\"أطفال\"];\n  document.getElementById('chips').innerHTML=cs.map(function(c){return '<button class=\"chip\" aria-pressed=\"'+(c===filter)+'\" data-c=\"'+c+'\">'+c+'<\/button>';}).join('');\n}\nfunction grid(){\n  document.getElementById('grid').innerHTML=products.filter(function(p){return filter===\"الكل\"||p.c===filter;}).map(function(p){\n    return '<article class=\"prod\"><div class=\"pic\" style=\"background:'+p.col+'\">'+shirt+'<\/div><div class=\"pb\"><h3>'+p.n+'<\/h3><small>'+p.c+'<\/small><div class=\"pr\"><b>'+p.p+' ريال<\/b><button class=\"add\" data-a=\"'+p.id+'\">أضف<\/button><\/div><\/div><\/article>';\n  }).join('');\n}\nfunction cartUI(){\n  var ids=Object.keys(cart), n=0, t=0;\n  document.getElementById('lines').innerHTML=ids.length?ids.map(function(id){\n    var p=products.filter(function(x){return x.id==id;})[0], q=cart[id]; n+=q; t+=q*p.p;\n    return '<div class=\"line\"><div><b>'+p.n+'<\/b><br><small>'+p.p+' ريال<\/small><\/div><div class=\"qty\"><button data-m=\"'+id+'\">-<\/button><span>'+q+'<\/span><button data-p=\"'+id+'\">+<\/button><\/div><\/div>';\n  }).join(''):'<p>السلة فارغة. أضف منتجًا من القائمة.<\/p>';\n  document.getElementById('count').textContent=n;\n  document.getElementById('total').textContent=t+' ريال';\n}\ndocument.getElementById('chips').onclick=function(e){var b=e.target.closest('[data-c]');if(b){filter=b.dataset.c;chips();grid();}};\ndocument.getElementById('grid').onclick=function(e){var b=e.target.closest('[data-a]');if(b){cart[b.dataset.a]=(cart[b.dataset.a]||0)+1;cartUI();}};\ndocument.getElementById('lines').onclick=function(e){\n  var m=e.target.closest('[data-m]'),p=e.target.closest('[data-p]');\n  if(p){cart[p.dataset.p]++;}\n  if(m){cart[m.dataset.m]--;if(cart[m.dataset.m]<=0)delete cart[m.dataset.m];}\n  cartUI();\n};\nfunction toggle(o){document.getElementById('drawer').classList.toggle('open',o);document.getElementById('veil').classList.toggle('open',o);}\ndocument.getElementById('openCart').onclick=function(){toggle(true);};\ndocument.getElementById('closeCart').onclick=function(){toggle(false);};\ndocument.getElementById('veil').onclick=function(){toggle(false);};\ndocument.getElementById('pay').onclick=function(){\n  var msg=document.getElementById('msg');\n  if(!Object.keys(cart).length){msg.style.color='#c2410c';msg.textContent='أضف منتجًا قبل إتمام الطلب.';return;}\n  msg.style.color='#0f766e';msg.textContent='تم استلام طلبك. شكرًا لتسوقك من خيط.';cart={};cartUI();\n};\nchips();grid();cartUI();\n<\/script>\n<\/body>\n<\/html>\n", "3": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>مدونة حبر<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&family=Readex+Pro:wght@500;700&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--bg:#F1F5F9;--ink:#0F172A;--blue:#1D4ED8;--mute:#64748B;--line:#CBD5E1}\n*{box-sizing:border-box}\nbody{margin:0;background:var(--bg);color:var(--ink);font-family:\"Noto Naskh Arabic\",Tahoma,serif;line-height:2;font-size:1.1rem}\nh1,h2,h3,.ui{font-family:\"Readex Pro\",Tahoma,sans-serif}\n.wrap{max-width:760px;margin:0 auto;padding:0 20px}\nheader{padding:44px 0 20px;border-bottom:3px solid var(--ink)}\nheader h1{margin:0;font-size:clamp(2.4rem,8vw,4rem);line-height:1.2}\nheader p{margin:6px 0 0;color:var(--mute)}\n.tools{display:grid;gap:12px;margin:22px 0}\ninput[type=search]{font:inherit;font-size:1rem;padding:10px 14px;border:2px solid var(--ink);border-radius:10px;background:#fff;width:100%}\n.chips{display:flex;gap:8px;flex-wrap:wrap}\n.chip{font-family:\"Readex Pro\",sans-serif;font-size:.85rem;border:2px solid var(--ink);background:transparent;border-radius:999px;padding:3px 14px;cursor:pointer;color:var(--ink)}\n.chip[aria-pressed=\"true\"]{background:var(--ink);color:#fff}\narticle.post{padding:22px 0;border-bottom:1px solid var(--line);cursor:pointer}\narticle.post h2{margin:6px 0;font-size:1.4rem;line-height:1.5}\narticle.post:hover h2{color:var(--blue)}\n.meta{font-family:\"Readex Pro\",sans-serif;font-size:.8rem;color:var(--mute)}\n.meta b{color:var(--blue);font-weight:500}\n.ex{margin:0;color:#334155}\n.none{padding:30px 0;color:var(--mute)}\ndialog{border:0;border-radius:14px;padding:0;width:min(680px,94vw);max-height:92vh}\ndialog::backdrop{background:rgba(15,23,42,.6)}\n.read{padding:26px}\n.read h2{font-size:1.7rem;line-height:1.5;margin:6px 0 14px}\n.read p{margin:0 0 14px}\n.close{font-family:\"Readex Pro\",sans-serif;border:2px solid var(--ink);background:#fff;border-radius:8px;padding:4px 16px;cursor:pointer;margin-top:6px}\nfooter{padding:30px 0;color:var(--mute);text-align:center;font-family:\"Readex Pro\",sans-serif;font-size:.85rem}\n<\/style>\n<\/head>\n<body>\n<div class=\"wrap\">\n  <header><h1>حبر<\/h1><p class=\"ui\">مدونة عن التقنية وتنظيم الوقت والتعلم<\/p><\/header>\n  <div class=\"tools\">\n    <input type=\"search\" id=\"q\" placeholder=\"ابحث في المقالات\" aria-label=\"بحث\">\n    <div class=\"chips\" id=\"chips\"><\/div>\n  <\/div>\n  <main id=\"list\"><\/main>\n  <footer>© حبر — مدونة تجريبية<\/footer>\n<\/div>\n<dialog id=\"dlg\"><div class=\"read\" id=\"read\"><\/div><\/dialog>\n\n<script>\nvar posts=[\n {id:1,t:\"كيف تبدأ تعلم البرمجة بدون تشتت\",c:\"تعلم\",d:\"2 أكتوبر 2026\",b:[\"أكبر خطأ يقع فيه المبتدئ هو القفز بين اللغات والدورات. اختر لغة واحدة والتزم بها ثلاثة أشهر.\",\"ابدأ بمشروع صغير من أول أسبوع، حتى لو كان صفحة واحدة. التطبيق العملي يثبت المعلومة أكثر من المشاهدة.\",\"خصص ساعة ثابتة كل يوم بدل ست ساعات في عطلة الأسبوع، فالاستمرار أهم من الكثافة.\"]},\n {id:2,t:\"خمس عادات تجعل ساعات عملك أكثر إنتاجًا\",c:\"إنتاجية\",d:\"28 سبتمبر 2026\",b:[\"رتب مهام اليوم في الليلة السابقة، فتبدأ صباحك بقرار جاهز.\",\"اعمل على المهمة الأصعب أولًا قبل فتح الرسائل.\",\"استخدم مؤقتًا لمدة 25 دقيقة ثم استرح خمسًا.\",\"أغلق الإشعارات أثناء العمل العميق.\",\"اختم يومك بمراجعة سريعة لما أنجزته.\"]},\n {id:3,t:\"ما الفرق بين تصميم الواجهة وتجربة المستخدم؟\",c:\"تصميم\",d:\"20 سبتمبر 2026\",b:[\"تصميم الواجهة يتعلق بما تراه العين: الألوان والخطوط والأزرار.\",\"تجربة المستخدم تتعلق بما يشعر به الشخص أثناء الاستخدام: هل وصل لهدفه بسهولة؟\",\"الموقع الجميل الذي يصعب استخدامه فاشل، والموقع البسيط الواضح ناجح.\"]},\n {id:4,t:\"أفضل طرق حفظ ملفاتك بأمان\",c:\"تقنية\",d:\"12 سبتمبر 2026\",b:[\"احتفظ بنسخة على جهازك ونسخة سحابية ونسخة على قرص خارجي.\",\"فعّل التحقق بخطوتين في كل حساباتك المهمة.\",\"جرّب استرجاع ملف من النسخة الاحتياطية مرة كل فترة للتأكد أنها تعمل.\"]},\n {id:5,t:\"لماذا يفشل أغلب الناس في تعلم الإنجليزية؟\",c:\"تعلم\",d:\"3 سبتمبر 2026\",b:[\"لأنهم يحفظون الكلمات دون استخدامها. اللغة مهارة تُمارس.\",\"ابدأ بالاستماع اليومي، ثم تحدث مع نفسك بجمل بسيطة، ثم كلم شخصًا حقيقيًا.\"]}\n];\nvar cat=\"الكل\", term=\"\";\nfunction chips(){\n  var cs=[\"الكل\"];posts.forEach(function(p){if(cs.indexOf(p.c)<0)cs.push(p.c);});\n  document.getElementById('chips').innerHTML=cs.map(function(c){return '<button class=\"chip\" aria-pressed=\"'+(c===cat)+'\" data-c=\"'+c+'\">'+c+'<\/button>';}).join('');\n}\nfunction list(){\n  var r=posts.filter(function(p){return (cat===\"الكل\"||p.c===cat)&&(p.t+p.b.join(' ')).indexOf(term)>-1;});\n  document.getElementById('list').innerHTML=r.length?r.map(function(p){\n    return '<article class=\"post\" data-id=\"'+p.id+'\" tabindex=\"0\"><div class=\"meta\"><b>'+p.c+'<\/b> — '+p.d+'<\/div><h2>'+p.t+'<\/h2><p class=\"ex\">'+p.b[0]+'<\/p><\/article>';\n  }).join(''):'<p class=\"none\">لا توجد مقالات مطابقة. جرّب كلمة أخرى.<\/p>';\n}\nfunction open(id){\n  var p=posts.filter(function(x){return x.id==id;})[0];\n  document.getElementById('read').innerHTML='<div class=\"meta\"><b>'+p.c+'<\/b> — '+p.d+'<\/div><h2>'+p.t+'<\/h2>'+p.b.map(function(x){return '<p>'+x+'<\/p>';}).join('')+'<button class=\"close\" id=\"cl\">إغلاق<\/button>';\n  document.getElementById('dlg').showModal();\n  document.getElementById('cl').onclick=function(){document.getElementById('dlg').close();};\n}\ndocument.getElementById('chips').onclick=function(e){var b=e.target.closest('[data-c]');if(b){cat=b.dataset.c;chips();list();}};\ndocument.getElementById('q').oninput=function(){term=this.value.trim();list();};\ndocument.getElementById('list').onclick=function(e){var a=e.target.closest('[data-id]');if(a)open(a.dataset.id);};\ndocument.getElementById('list').onkeydown=function(e){if(e.key==='Enter'){var a=e.target.closest('[data-id]');if(a)open(a.dataset.id);}};\nchips();list();\n<\/script>\n<\/body>\n<\/html>\n", "4": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>مدرسة النور النموذجية<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Cairo:wght@400;500&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--navy:#0B2A5B;--green:#16A34A;--gold:#F5B82E;--bg:#F5F8FD;--ink:#12213D}\n*{box-sizing:border-box}\nbody{margin:0;font-family:Cairo,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0;line-height:1.35}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\n.top{background:var(--navy);color:#fff}\nnav{display:flex;justify-content:space-between;align-items:center;padding:14px 0}\nnav b{font-family:\"Readex Pro\",sans-serif;font-size:1.2rem}\nnav a{color:#fff;text-decoration:none;margin-inline-start:16px;font-size:.95rem}\nnav a:hover{color:var(--gold)}\n.hero{padding:40px 0 70px;position:relative}\n.hero h1{font-size:clamp(2rem,6vw,3.3rem);max-width:16ch}\n.hero p{max-width:48ch;opacity:.9;margin:12px 0 22px}\n.btn{display:inline-block;background:var(--gold);color:var(--navy);font-family:\"Readex Pro\",sans-serif;font-weight:600;padding:11px 24px;border-radius:10px;text-decoration:none;border:0;cursor:pointer;font-size:1rem}\n.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:-40px;position:relative}\n.stat{background:#fff;border-radius:14px;padding:16px;text-align:center;border-bottom:5px solid var(--green);box-shadow:0 8px 20px rgba(11,42,91,.12)}\n.stat b{display:block;font-family:\"Readex Pro\",sans-serif;font-size:1.9rem;color:var(--navy)}\nsection{padding:46px 0}\nsection h2{font-size:1.7rem;margin-bottom:18px;color:var(--navy)}\n.news{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}\n.n{background:#fff;border-radius:12px;padding:18px;border-inline-start:6px solid var(--gold)}\n.n small{color:#5b6b8a}.n h3{font-size:1.05rem;margin:4px 0}.n p{margin:0;font-size:.94rem}\n.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}\n.tab{font:inherit;border:2px solid var(--navy);background:#fff;color:var(--navy);padding:4px 16px;border-radius:999px;cursor:pointer}\n.tab[aria-pressed=\"true\"]{background:var(--navy);color:#fff}\n.tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}\n.tbl th{background:var(--navy);color:#fff;padding:10px;font-weight:500}\n.tbl td{padding:10px;text-align:center;border-bottom:1px solid #e3eaf6}\n.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}\n.t{background:#fff;border-radius:14px;padding:18px;text-align:center}\n.av{width:64px;height:64px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:var(--green);color:#fff;font-family:\"Readex Pro\",sans-serif;font-size:1.6rem}\n.t small{color:#5b6b8a}\nform{background:#fff;border-radius:14px;padding:22px;display:grid;gap:10px;max-width:560px}\nlabel{display:grid;gap:4px;font-weight:500;font-size:.92rem}\ninput,textarea{font:inherit;padding:9px 12px;border:2px solid #d1dcef;border-radius:8px;width:100%}\ntextarea{min-height:90px}\n.ok{margin:0;color:var(--green);font-weight:700;min-height:1.4em}\nfooter{background:var(--navy);color:#fff;text-align:center;padding:20px;font-size:.9rem}\n@media(max-width:700px){.stats{grid-template-columns:1fr;margin-top:-30px}nav a{margin-inline-start:8px;font-size:.85rem}}\n<\/style>\n<\/head>\n<body>\n<header class=\"top\"><div class=\"wrap\">\n  <nav><b>مدرسة النور<\/b><div><a href=\"#news\">الأخبار<\/a><a href=\"#sched\">الجدول<\/a><a href=\"#team\">المعلمون<\/a><a href=\"#contact\">تواصل<\/a><\/div><\/nav>\n  <div class=\"hero\"><h1>نبني جيلًا يحب التعلم<\/h1><p>بيئة تعليمية آمنة ومعلمون متخصصون وأنشطة تنمي مهارات الطلاب في كل مرحلة.<\/p><a class=\"btn\" href=\"#contact\">سجّل ابنك<\/a><\/div>\n<\/div><\/header>\n\n<div class=\"wrap stats\">\n  <div class=\"stat\"><b>850<\/b>طالب وطالبة<\/div>\n  <div class=\"stat\"><b>45<\/b>معلم ومعلمة<\/div>\n  <div class=\"stat\"><b>12<\/b>سنة من الخبرة<\/div>\n<\/div>\n\n<section id=\"news\"><div class=\"wrap\"><h2>آخر الأخبار<\/h2>\n  <div class=\"news\">\n    <div class=\"n\"><small>1 أكتوبر 2026<\/small><h3>بدء التسجيل للعام الدراسي الجديد<\/h3><p>يفتح باب التسجيل للمراحل الابتدائية والمتوسطة حتى نهاية الشهر.<\/p><\/div>\n    <div class=\"n\"><small>25 سبتمبر 2026<\/small><h3>معرض العلوم السنوي<\/h3><p>مشاريع الطلاب في الفيزياء والكيمياء بحضور أولياء الأمور.<\/p><\/div>\n    <div class=\"n\"><small>18 سبتمبر 2026<\/small><h3>تكريم الطلاب المتفوقين<\/h3><p>حفل تكريم لأوائل الصفوف في الفصل الدراسي الماضي.<\/p><\/div>\n  <\/div><\/div><\/section>\n\n<section id=\"sched\" style=\"background:#fff\"><div class=\"wrap\"><h2>الجدول الأسبوعي<\/h2>\n  <div class=\"tabs\" id=\"tabs\"><\/div>\n  <table class=\"tbl\"><thead><tr><th>الحصة<\/th><th>السبت<\/th><th>الأحد<\/th><th>الاثنين<\/th><th>الثلاثاء<\/th><th>الأربعاء<\/th><\/tr><\/thead><tbody id=\"rows\"><\/tbody><\/table>\n<\/div><\/section>\n\n<section id=\"team\"><div class=\"wrap\"><h2>معلمونا<\/h2><div class=\"team\" id=\"teamList\"><\/div><\/div><\/section>\n\n<section id=\"contact\" style=\"background:#fff\"><div class=\"wrap\"><h2>تواصل معنا<\/h2>\n  <form id=\"f\">\n    <label>الاسم<input id=\"nm\" required><\/label>\n    <label>رقم الجوال<input id=\"ph\" dir=\"ltr\" required><\/label>\n    <label>رسالتك<textarea id=\"ms\" required><\/textarea><\/label>\n    <button class=\"btn\" type=\"submit\">إرسال<\/button>\n    <p class=\"ok\" id=\"ok\" role=\"status\"><\/p>\n  <\/form><\/div><\/section>\n<footer>© مدرسة النور النموذجية — موقع تجريبي<\/footer>\n\n<script>\nvar grades={\n \"الصف الأول\":[[\"عربي\",\"رياضيات\",\"علوم\",\"عربي\",\"رياضيات\"],[\"رياضيات\",\"عربي\",\"إنجليزي\",\"علوم\",\"عربي\"],[\"إنجليزي\",\"تربية إسلامية\",\"عربي\",\"رياضيات\",\"فنية\"],[\"علوم\",\"فنية\",\"رياضيات\",\"تربية إسلامية\",\"إنجليزي\"]],\n \"الصف الثاني\":[[\"رياضيات\",\"عربي\",\"عربي\",\"علوم\",\"إنجليزي\"],[\"عربي\",\"علوم\",\"رياضيات\",\"إنجليزي\",\"عربي\"],[\"تربية إسلامية\",\"رياضيات\",\"فنية\",\"عربي\",\"رياضيات\"],[\"إنجليزي\",\"فنية\",\"علوم\",\"تربية إسلامية\",\"علوم\"]],\n \"الصف الثالث\":[[\"علوم\",\"رياضيات\",\"إنجليزي\",\"عربي\",\"رياضيات\"],[\"عربي\",\"إنجليزي\",\"رياضيات\",\"علوم\",\"تربية إسلامية\"],[\"رياضيات\",\"عربي\",\"تربية إسلامية\",\"فنية\",\"عربي\"],[\"فنية\",\"علوم\",\"عربي\",\"رياضيات\",\"إنجليزي\"]]\n};\nvar g=\"الصف الأول\";\nfunction sched(){\n  document.getElementById('tabs').innerHTML=Object.keys(grades).map(function(k){return '<button class=\"tab\" aria-pressed=\"'+(k===g)+'\" data-g=\"'+k+'\">'+k+'<\/button>';}).join('');\n  document.getElementById('rows').innerHTML=grades[g].map(function(r,i){return '<tr><td>'+(i+1)+'<\/td>'+r.map(function(c){return '<td>'+c+'<\/td>';}).join('')+'<\/tr>';}).join('');\n}\ndocument.getElementById('tabs').onclick=function(e){var b=e.target.closest('[data-g]');if(b){g=b.dataset.g;sched();}};\nvar team=[[\"أحمد السالم\",\"معلم رياضيات\"],[\"نورة الحربي\",\"معلمة علوم\"],[\"خالد العتيبي\",\"معلم لغة عربية\"],[\"سارة القحطاني\",\"معلمة لغة إنجليزية\"]];\ndocument.getElementById('teamList').innerHTML=team.map(function(t){return '<div class=\"t\"><div class=\"av\">'+t[0].charAt(0)+'<\/div><h3>'+t[0]+'<\/h3><small>'+t[1]+'<\/small><\/div>';}).join('');\ndocument.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').textContent='شكرًا '+document.getElementById('nm').value+'، وصلتنا رسالتك وسنتواصل معك قريبًا.';this.reset();};\nsched();\n<\/script>\n<\/body>\n<\/html>\n", "5": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>عيادة ابتسامة<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--teal:#0F766E;--teal2:#14B8A6;--mint:#E6F7F4;--ink:#0B2B29;--sun:#FDBA74}\n*{box-sizing:border-box}\nbody{margin:0;font-family:Tajawal,Tahoma,sans-serif;color:var(--ink);background:#fff;line-height:1.8}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0;line-height:1.35}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nheader{position:sticky;top:0;background:#fff;border-bottom:1px solid #d5ece8;z-index:5}\nnav{display:flex;justify-content:space-between;align-items:center;padding:12px 0}\nnav b{font-family:\"Readex Pro\",sans-serif;font-size:1.3rem;color:var(--teal)}\nnav a{color:var(--ink);text-decoration:none;margin-inline-start:16px;font-size:.95rem}\nnav a:hover{color:var(--teal)}\n.hero{background:linear-gradient(135deg,var(--mint),#fff);padding:50px 0}\n.hero .wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}\n.hero h1{font-size:clamp(2rem,6vw,3.4rem)}\n.hero p{max-width:46ch;margin:12px 0 22px;color:#35625e}\n.btn{display:inline-block;background:var(--teal);color:#fff;font-family:\"Readex Pro\",sans-serif;font-weight:600;border:0;border-radius:999px;padding:12px 28px;text-decoration:none;cursor:pointer;font-size:1rem}\n.tooth{width:min(240px,60vw);margin:auto;fill:#fff;stroke:var(--teal);stroke-width:3;filter:drop-shadow(0 14px 18px rgba(15,118,110,.25))}\nsection{padding:46px 0}\nsection h2{font-size:1.8rem;margin-bottom:18px;color:var(--teal)}\n.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}\n.tab{font:inherit;border:2px solid var(--teal);background:#fff;color:var(--teal);border-radius:999px;padding:5px 18px;cursor:pointer}\n.tab[aria-pressed=\"true\"]{background:var(--teal);color:#fff}\n.svc{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}\n.s{background:var(--mint);border-radius:16px;padding:18px;border-bottom:4px solid var(--teal2)}\n.s h3{font-size:1.05rem}.s p{margin:4px 0 0;font-size:.93rem;color:#35625e}.s b{display:block;margin-top:8px;color:var(--teal)}\n.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}\n.d{border:2px solid var(--mint);border-radius:16px;padding:18px;text-align:center}\n.av{width:68px;height:68px;border-radius:50%;margin:0 auto 8px;display:grid;place-items:center;background:var(--teal);color:#fff;font-family:\"Readex Pro\",sans-serif;font-size:1.6rem}\n.d small{color:#4b7570}\nform{background:var(--mint);border-radius:18px;padding:22px;display:grid;gap:10px;max-width:560px}\nlabel{display:grid;gap:4px;font-weight:700;font-size:.92rem}\ninput,select{font:inherit;padding:10px 12px;border:2px solid #bfe3dd;border-radius:10px;width:100%;background:#fff}\n.ok{color:var(--teal);font-weight:700;margin:0;min-height:1.4em}\nfooter{background:var(--ink);color:#d5ece8;text-align:center;padding:20px;font-size:.9rem}\n@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}nav a{margin-inline-start:8px;font-size:.85rem}}\n<\/style>\n<\/head>\n<body>\n<header><div class=\"wrap\"><nav><b>عيادة ابتسامة<\/b><div><a href=\"#svc\">الخدمات<\/a><a href=\"#docs\">الأطباء<\/a><a href=\"#book\">احجز<\/a><\/div><\/nav><\/div><\/header>\n<div class=\"hero\"><div class=\"wrap\">\n  <div><h1>ابتسامتك تستحق عناية تدوم<\/h1><p>فريق أسنان متخصص، وأجهزة حديثة، ومواعيد مرنة تناسب وقتك. الكشف الأول مجاني.<\/p><a class=\"btn\" href=\"#book\">احجز موعدك<\/a><\/div>\n  <svg class=\"tooth\" viewBox=\"0 0 100 110\" aria-hidden=\"true\"><path d=\"M50 12c-9-8-30-6-33 13-2 13 6 20 8 36 2 16 3 34 11 34 7 0 6-20 14-20s7 20 14 20c8 0 9-18 11-34 2-16 10-23 8-36-3-19-24-21-33-13z\"/><\/svg>\n<\/div><\/div>\n\n<section id=\"svc\"><div class=\"wrap\"><h2>خدماتنا<\/h2>\n  <div class=\"tabs\" id=\"tabs\"><\/div><div class=\"svc\" id=\"svcList\"><\/div><\/div><\/section>\n\n<section id=\"docs\" style=\"background:#f6fbfa\"><div class=\"wrap\"><h2>أطباؤنا<\/h2><div class=\"docs\" id=\"docList\"><\/div><\/div><\/section>\n\n<section id=\"book\"><div class=\"wrap\"><h2>احجز موعدًا<\/h2>\n  <form id=\"f\">\n    <label>الاسم<input id=\"n\" required><\/label>\n    <label>رقم الجوال<input id=\"p\" dir=\"ltr\" required><\/label>\n    <label>الخدمة<select id=\"s\"><\/select><\/label>\n    <label>التاريخ المناسب<input id=\"d\" type=\"date\" required><\/label>\n    <button class=\"btn\" type=\"submit\">تأكيد الحجز<\/button>\n    <p class=\"ok\" id=\"ok\" role=\"status\"><\/p>\n  <\/form><\/div><\/section>\n<footer>© عيادة ابتسامة — موقع تجريبي<\/footer>\n<script>\nvar svc={\"الفحص والتنظيف\":[[\"كشف شامل\",\"فحص كامل مع تصوير بالأشعة عند الحاجة\",\"مجاني\"],[\"تنظيف الجير\",\"إزالة الجير والتصبغات بجهاز حديث\",\"150 ريال\"]],\n\"التجميل\":[[\"تبييض الأسنان\",\"جلسة واحدة بنتيجة تدوم\",\"600 ريال\"],[\"عدسات تجميلية\",\"تصميم ابتسامة متناسقة\",\"من 900 ريال\"]],\n\"العلاج\":[[\"حشو تجميلي\",\"حشوات بلون السن الطبيعي\",\"200 ريال\"],[\"علاج العصب\",\"بجلسة واحدة وبتخدير موضعي\",\"450 ريال\"],[\"تقويم الأسنان\",\"شفاف أو معدني حسب الحالة\",\"من 3000 ريال\"]]};\nvar cur=Object.keys(svc)[0];\nfunction show(){\n document.getElementById('tabs').innerHTML=Object.keys(svc).map(function(k){return '<button class=\"tab\" aria-pressed=\"'+(k===cur)+'\" data-k=\"'+k+'\">'+k+'<\/button>';}).join('');\n document.getElementById('svcList').innerHTML=svc[cur].map(function(i){return '<div class=\"s\"><h3>'+i[0]+'<\/h3><p>'+i[1]+'<\/p><b>'+i[2]+'<\/b><\/div>';}).join('');\n}\ndocument.getElementById('tabs').onclick=function(e){var b=e.target.closest('[data-k]');if(b){cur=b.dataset.k;show();}};\nvar all=[];Object.keys(svc).forEach(function(k){svc[k].forEach(function(i){all.push(i[0]);});});\ndocument.getElementById('s').innerHTML=all.map(function(a){return '<option>'+a+'<\/option>';}).join('');\nvar docs=[[\"د. ريم الشهري\",\"تجميل الأسنان\"],[\"د. فهد العمري\",\"جراحة الفم\"],[\"د. هند القرني\",\"تقويم الأسنان\"]];\ndocument.getElementById('docList').innerHTML=docs.map(function(t){return '<div class=\"d\"><div class=\"av\">'+t[0].charAt(3)+'<\/div><h3>'+t[0]+'<\/h3><small>'+t[1]+'<\/small><\/div>';}).join('');\ndocument.getElementById('d').min=new Date().toISOString().slice(0,10);\ndocument.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').textContent='شكرًا '+document.getElementById('n').value+'، تم استلام طلب حجزك لخدمة «'+document.getElementById('s').value+'» وسنتصل بك للتأكيد.';this.reset();};\nshow();\n<\/script>\n<\/body>\n<\/html>\n", "6": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>نادي قوة<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Lalezar&family=Almarai:wght@400;700;800&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--bg:#0E0E12;--card:#191920;--lime:#C6F432;--ink:#F4F4F6;--mute:#A3A3B2;--line:#2B2B36}\n*{box-sizing:border-box}\nbody{margin:0;font-family:Almarai,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8}\nh1,h2,h3{font-family:Lalezar,Tahoma,sans-serif;font-weight:400;margin:0;line-height:1.25}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nnav{display:flex;justify-content:space-between;align-items:center;padding:16px 0}\nnav b{font-family:Lalezar,sans-serif;font-size:1.7rem;color:var(--lime)}\nnav a{color:var(--ink);text-decoration:none;margin-inline-start:16px;font-size:.95rem}\nnav a:hover{color:var(--lime)}\n.hero{padding:40px 0 60px}\n.hero h1{font-size:clamp(2.8rem,10vw,6rem);max-width:12ch}\n.hero h1 span{color:var(--lime)}\n.hero p{color:var(--mute);max-width:46ch;margin:12px 0 24px}\n.btn{display:inline-block;background:var(--lime);color:#0E0E12;font-weight:800;border:0;border-radius:12px;padding:12px 28px;text-decoration:none;cursor:pointer;font-size:1rem;font-family:inherit}\nsection{padding:44px 0}\nsection h2{font-size:2rem;margin-bottom:18px}\n.sw{display:inline-flex;background:var(--card);border-radius:999px;padding:4px;margin-bottom:22px;border:1px solid var(--line)}\n.sw button{font:inherit;font-weight:700;border:0;background:transparent;color:var(--mute);padding:6px 20px;border-radius:999px;cursor:pointer}\n.sw button[aria-pressed=\"true\"]{background:var(--lime);color:#0E0E12}\n.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}\n.pl{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:8px}\n.pl.hot{border-color:var(--lime)}\n.pl .pr{font-family:Lalezar,sans-serif;font-size:2.4rem;color:var(--lime)}\n.pl small{color:var(--mute)}\n.pl ul{list-style:none;margin:6px 0 10px;padding:0;display:grid;gap:4px;color:var(--mute);font-size:.94rem}\n.pl li::before{content:\"✓ \";color:var(--lime);font-weight:800}\n.cls{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden}\n.cls th{background:var(--lime);color:#0E0E12;padding:10px}\n.cls td{padding:10px;text-align:center;border-bottom:1px solid var(--line);font-size:.93rem}\n.tbw{overflow-x:auto}\nform{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;display:grid;gap:10px;max-width:520px}\nlabel{display:grid;gap:4px;font-weight:700;font-size:.92rem}\ninput,select{font:inherit;padding:10px 12px;border:2px solid var(--line);border-radius:10px;width:100%;background:var(--bg);color:var(--ink)}\n.ok{color:var(--lime);font-weight:700;margin:0;min-height:1.4em}\nfooter{border-top:1px solid var(--line);color:var(--mute);text-align:center;padding:20px;font-size:.9rem}\n@media(max-width:700px){nav a{margin-inline-start:8px;font-size:.85rem}}\n<\/style>\n<\/head>\n<body>\n<div class=\"wrap\">\n<nav><b>قوة<\/b><div><a href=\"#plans\">الباقات<\/a><a href=\"#cls\">الحصص<\/a><a href=\"#join\">انضم<\/a><\/div><\/nav>\n<div class=\"hero\"><h1>ابنِ <span>جسمك<\/span> من جديد<\/h1><p>أجهزة حديثة، ومدربون معتمدون، وحصص جماعية يوميًا. جرّب أسبوعًا كاملًا بدون التزام.<\/p><a class=\"btn\" href=\"#join\">ابدأ تجربتك<\/a><\/div>\n\n<section id=\"plans\"><h2>الباقات<\/h2>\n  <div class=\"sw\" role=\"group\" aria-label=\"مدة الاشتراك\"><button id=\"bm\" aria-pressed=\"true\">شهري<\/button><button id=\"by\" aria-pressed=\"false\">سنوي (وفّر 20%)<\/button><\/div>\n  <div class=\"plans\" id=\"planList\"><\/div><\/section>\n\n<section id=\"cls\"><h2>جدول الحصص<\/h2>\n  <div class=\"tbw\"><table class=\"cls\"><thead><tr><th>اليوم<\/th><th>الصباح<\/th><th>العصر<\/th><th>المساء<\/th><\/tr><\/thead><tbody>\n  <tr><td>السبت<\/td><td>يوغا<\/td><td>كارديو<\/td><td>كروس فت<\/td><\/tr>\n  <tr><td>الأحد<\/td><td>بيلاتس<\/td><td>تمارين قوة<\/td><td>ملاكمة<\/td><\/tr>\n  <tr><td>الاثنين<\/td><td>يوغا<\/td><td>زومبا<\/td><td>كروس فت<\/td><\/tr>\n  <tr><td>الثلاثاء<\/td><td>كارديو<\/td><td>تمارين قوة<\/td><td>ملاكمة<\/td><\/tr>\n  <tr><td>الأربعاء<\/td><td>بيلاتس<\/td><td>زومبا<\/td><td>كروس فت<\/td><\/tr><\/tbody><\/table><\/div><\/section>\n\n<section id=\"join\"><h2>انضم إلينا<\/h2>\n  <form id=\"f\">\n    <label>الاسم<input id=\"n\" required><\/label>\n    <label>رقم الجوال<input id=\"p\" dir=\"ltr\" required><\/label>\n    <label>الباقة<select id=\"s\"><\/select><\/label>\n    <button class=\"btn\" type=\"submit\">سجّل الآن<\/button>\n    <p class=\"ok\" id=\"ok\" role=\"status\"><\/p>\n  <\/form><\/section>\n<\/div>\n<footer>© نادي قوة — موقع تجريبي<\/footer>\n<script>\nvar plans=[{n:\"أساسية\",m:150,f:[\"دخول صالة الأجهزة\",\"خزانة شخصية\",\"تطبيق متابعة\"]},\n{n:\"متقدمة\",m:250,f:[\"كل مزايا الأساسية\",\"الحصص الجماعية\",\"تقييم شهري للجسم\"],hot:1},\n{n:\"بلس\",m:400,f:[\"كل مزايا المتقدمة\",\"مدرب شخصي مرتين أسبوعيًا\",\"خطة غذائية\"]}];\nvar yearly=false;\nfunction draw(){\n document.getElementById('planList').innerHTML=plans.map(function(p){\n  var price=yearly?Math.round(p.m*0.8):p.m;\n  return '<div class=\"pl'+(p.hot?' hot':'')+'\"><h3>'+p.n+'<\/h3><div class=\"pr\">'+price+' <small>ريال / شهريًا<\/small><\/div><ul>'+p.f.map(function(x){return '<li>'+x+'<\/li>';}).join('')+'<\/ul><a class=\"btn\" href=\"#join\">اختر '+p.n+'<\/a><\/div>';\n }).join('');\n document.getElementById('s').innerHTML=plans.map(function(p){return '<option>'+p.n+'<\/option>';}).join('');\n}\nfunction setMode(y){yearly=y;document.getElementById('bm').setAttribute('aria-pressed',!y);document.getElementById('by').setAttribute('aria-pressed',y);draw();}\ndocument.getElementById('bm').onclick=function(){setMode(false);};\ndocument.getElementById('by').onclick=function(){setMode(true);};\ndocument.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').textContent='أهلًا '+document.getElementById('n').value+'! تم تسجيلك في باقة '+document.getElementById('s').value+' وسنتصل بك قريبًا.';this.reset();};\ndraw();\n<\/script>\n<\/body>\n<\/html>\n", "7": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>معرض لمى للتصميم<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Cairo:wght@400;600&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--bg:#FFF8F1;--ink:#2B1B14;--rust:#C2410C;--sand:#F3E3D3;--mute:#7A6455}\n*{box-sizing:border-box}\nbody{margin:0;font-family:Cairo,Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0;line-height:1.3}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nnav{display:flex;justify-content:space-between;align-items:center;padding:16px 0}\nnav b{font-family:\"Readex Pro\",sans-serif;font-size:1.2rem}\nnav a{color:var(--ink);text-decoration:none;margin-inline-start:16px;font-size:.95rem}\nnav a:hover{color:var(--rust)}\n.hero{padding:40px 0 30px}\n.hero small{color:var(--rust);font-weight:700}\n.hero h1{font-size:clamp(2.4rem,8vw,4.6rem);max-width:15ch;margin:6px 0 12px}\n.hero p{color:var(--mute);max-width:48ch;margin:0 0 20px}\n.btn{display:inline-block;background:var(--ink);color:#fff;font-family:\"Readex Pro\",sans-serif;font-weight:600;border:0;border-radius:10px;padding:11px 26px;text-decoration:none;cursor:pointer;font-size:1rem}\nsection{padding:36px 0}\nsection h2{font-size:1.7rem;margin-bottom:16px}\n.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}\n.chip{font:inherit;border:2px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:4px 18px;cursor:pointer}\n.chip[aria-pressed=\"true\"]{background:var(--ink);color:#fff}\n.works{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}\n.w{border:0;padding:0;text-align:start;font:inherit;color:inherit;cursor:pointer;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(43,27,20,.08);transition:transform .2s}\n.w:hover{transform:translateY(-4px)}\n.w .art{height:150px;display:grid;place-items:center;font-family:\"Readex Pro\",sans-serif;font-size:2.6rem;color:#fff}\n.w .t{padding:12px 16px}.w .t small{color:var(--mute)}\n.about{display:grid;grid-template-columns:1fr 2fr;gap:24px;align-items:center;background:var(--sand);border-radius:20px;padding:24px}\n.me{width:min(150px,40vw);aspect-ratio:1;border-radius:50%;margin:auto;background:var(--rust);display:grid;place-items:center;color:#fff;font-family:\"Readex Pro\",sans-serif;font-size:3rem}\n.sk{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}\n.sk span{background:#fff;border-radius:999px;padding:2px 14px;font-size:.88rem}\nform{background:#fff;border-radius:16px;padding:22px;display:grid;gap:10px;max-width:520px;box-shadow:0 6px 18px rgba(43,27,20,.08)}\nlabel{display:grid;gap:4px;font-weight:600;font-size:.92rem}\ninput,textarea{font:inherit;padding:10px 12px;border:2px solid var(--sand);border-radius:10px;width:100%}\ntextarea{min-height:90px}\n.ok{color:var(--rust);font-weight:700;margin:0;min-height:1.4em}\ndialog{border:0;border-radius:18px;padding:0;width:min(520px,92vw)}\ndialog::backdrop{background:rgba(43,27,20,.6)}\n.dl .art{height:190px;display:grid;place-items:center;font-family:\"Readex Pro\",sans-serif;font-size:3.4rem;color:#fff}\n.dl .b{padding:20px}\n.dl button{margin-top:8px}\nfooter{text-align:center;color:var(--mute);padding:26px;font-size:.9rem}\n@media(max-width:700px){.about{grid-template-columns:1fr;text-align:center}.sk{justify-content:center}nav a{margin-inline-start:8px;font-size:.85rem}}\n<\/style>\n<\/head>\n<body>\n<div class=\"wrap\">\n<nav><b>لمى الغامدي<\/b><div><a href=\"#works\">أعمالي<\/a><a href=\"#about\">نبذة<\/a><a href=\"#contact\">تواصل<\/a><\/div><\/nav>\n<div class=\"hero\"><small>مصممة هوية بصرية<\/small><h1>أصمم علامات تُحكي قصة أصحابها<\/h1><p>شعارات وهويات ومطبوعات لمشاريع ناشئة ومتاجر محلية، بأسلوب بسيط ولمسة عربية.<\/p><a class=\"btn\" href=\"#contact\">ابدأ مشروعك معي<\/a><\/div>\n\n<section id=\"works\"><h2>أعمالي<\/h2><div class=\"chips\" id=\"chips\"><\/div><div class=\"works\" id=\"list\"><\/div><\/section>\n\n<section id=\"about\"><div class=\"about\"><div class=\"me\">ل<\/div><div><h2 style=\"margin-bottom:6px\">نبذة عني<\/h2><p style=\"margin:0\">مصممة جرافيك بخبرة ثماني سنوات، عملت مع أكثر من 60 علامة تجارية. أؤمن أن التصميم الجيد يبدأ بالإنصات.<\/p><div class=\"sk\"><span>شعارات<\/span><span>هويات بصرية<\/span><span>تغليف<\/span><span>سوشيال ميديا<\/span><\/div><\/div><\/div><\/section>\n\n<section id=\"contact\"><h2>تواصل معي<\/h2>\n  <form id=\"f\"><label>الاسم<input id=\"n\" required><\/label><label>البريد الإلكتروني<input id=\"m\" type=\"email\" dir=\"ltr\" required><\/label><label>عن مشروعك<textarea id=\"t\" required><\/textarea><\/label><button class=\"btn\" type=\"submit\">إرسال<\/button><p class=\"ok\" id=\"ok\" role=\"status\"><\/p><\/form><\/section>\n<\/div>\n<footer>© لمى الغامدي — موقع تجريبي<\/footer>\n<dialog id=\"dlg\"><div class=\"dl\" id=\"dl\"><\/div><\/dialog>\n<script>\nvar works=[{id:1,t:\"هوية مقهى زهرة\",c:\"هويات\",y:\"2026\",col:\"#C2410C\",d:\"شعار وألوان وقوائم ومطبوعات لمقهى جديد في جدة.\"},\n{id:2,t:\"شعار مخبز الضيعة\",c:\"شعارات\",y:\"2026\",col:\"#B45309\",d:\"شعار بسيط مستوحى من سنابل القمح وخط عربي حديث.\"},\n{id:3,t:\"تغليف عسل الجبل\",c:\"تغليف\",y:\"2025\",col:\"#A16207\",d:\"تصميم عبوات عسل بثلاثة أحجام وملصقات قابلة للطباعة.\"},\n{id:4,t:\"حملة رمضان\",c:\"سوشيال\",y:\"2025\",col:\"#9A3412\",d:\"سلسلة منشورات ثابتة ومتحركة لمتجر عطور.\"},\n{id:5,t:\"هوية معهد نور\",c:\"هويات\",y:\"2025\",col:\"#7C2D12\",d:\"هوية بصرية كاملة لمعهد تدريب مع دليل استخدام.\"},\n{id:6,t:\"شعار استوديو ظل\",c:\"شعارات\",y:\"2024\",col:\"#92400E\",d:\"شعار لاستوديو تصوير بأسلوب الظل والضوء.\"}];\nvar cat=\"الكل\";\nfunction chips(){var cs=[\"الكل\"];works.forEach(function(w){if(cs.indexOf(w.c)<0)cs.push(w.c);});\n document.getElementById('chips').innerHTML=cs.map(function(c){return '<button class=\"chip\" aria-pressed=\"'+(c===cat)+'\" data-c=\"'+c+'\">'+c+'<\/button>';}).join('');}\nfunction list(){document.getElementById('list').innerHTML=works.filter(function(w){return cat===\"الكل\"||w.c===cat;}).map(function(w){\n return '<button class=\"w\" data-id=\"'+w.id+'\"><div class=\"art\" style=\"background:'+w.col+'\">'+w.t.charAt(0)+'<\/div><div class=\"t\"><h3 style=\"font-size:1.05rem\">'+w.t+'<\/h3><small>'+w.c+' · '+w.y+'<\/small><\/div><\/button>';}).join('');}\ndocument.getElementById('chips').onclick=function(e){var b=e.target.closest('[data-c]');if(b){cat=b.dataset.c;chips();list();}};\ndocument.getElementById('list').onclick=function(e){var b=e.target.closest('[data-id]');if(!b)return;\n var w=works.filter(function(x){return x.id==b.dataset.id;})[0];\n document.getElementById('dl').innerHTML='<div class=\"art\" style=\"background:'+w.col+'\">'+w.t.charAt(0)+'<\/div><div class=\"b\"><h2 style=\"font-size:1.4rem\">'+w.t+'<\/h2><small>'+w.c+' · '+w.y+'<\/small><p>'+w.d+'<\/p><button class=\"btn\" id=\"cl\">إغلاق<\/button><\/div>';\n document.getElementById('dlg').showModal();document.getElementById('cl').onclick=function(){document.getElementById('dlg').close();};};\ndocument.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').textContent='شكرًا '+document.getElementById('n').value+'، وصلتني رسالتك وسأرد عليك قريبًا.';this.reset();};\nchips();list();\n<\/script>\n<\/body>\n<\/html>\n", "8": "<!DOCTYPE html>\n<html lang=\"ar\" dir=\"rtl\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<title>تطبيق وقتي<\/title>\n<link href=\"https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500&display=swap\" rel=\"stylesheet\">\n<style>\n:root{--ink:#14123A;--v:#5B4BFF;--v2:#EFEDFF;--pk:#FF5C8A;--mute:#5E5C86}\n*{box-sizing:border-box}\nbody{margin:0;font-family:\"IBM Plex Sans Arabic\",Tahoma,sans-serif;background:#fff;color:var(--ink);line-height:1.8}\nh1,h2,h3{font-family:\"Readex Pro\",Tahoma,sans-serif;margin:0;line-height:1.3}\n.wrap{max-width:1040px;margin:0 auto;padding:0 20px}\nnav{display:flex;justify-content:space-between;align-items:center;padding:16px 0}\nnav b{font-family:\"Readex Pro\",sans-serif;font-size:1.4rem;color:var(--v)}\nnav a{color:var(--ink);text-decoration:none;margin-inline-start:16px;font-size:.95rem}\n.hero{background:linear-gradient(160deg,var(--v2),#fff 70%);padding:30px 0 56px}\n.hero .wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}\n.hero h1{font-size:clamp(2.2rem,7vw,3.8rem)}\n.hero h1 span{color:var(--v)}\n.hero p{color:var(--mute);max-width:44ch;margin:12px 0 22px}\n.btn{display:inline-block;background:var(--v);color:#fff;font-family:\"Readex Pro\",sans-serif;font-weight:600;border:0;border-radius:14px;padding:12px 28px;text-decoration:none;cursor:pointer;font-size:1rem}\n.phone{width:min(230px,60vw);aspect-ratio:9/18;margin:auto;border:6px solid var(--ink);border-radius:30px;background:#fff;padding:14px;display:grid;gap:8px;align-content:start;box-shadow:0 20px 40px rgba(91,75,255,.25);transform:rotate(-4deg)}\n.task{display:flex;align-items:center;gap:8px;border-radius:12px;background:var(--v2);padding:8px 10px;font-size:.82rem}\n.task i{width:16px;height:16px;border-radius:50%;border:2px solid var(--v);flex:none}\n.task.done{opacity:.55;text-decoration:line-through}.task.done i{background:var(--v)}\n.task.pk{background:#FFE6EE}.task.pk i{border-color:var(--pk)}\nsection{padding:46px 0}\nsection h2{font-size:1.8rem;margin-bottom:18px;text-align:center}\n.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}\n.f{background:var(--v2);border-radius:18px;padding:20px}\n.f .ic{width:44px;height:44px;border-radius:12px;background:var(--v);color:#fff;display:grid;place-items:center;font-size:1.3rem;margin-bottom:8px}\n.f p{margin:4px 0 0;color:var(--mute);font-size:.94rem}\n.faq{max-width:700px;margin:auto;display:grid;gap:10px}\ndetails{border:2px solid var(--v2);border-radius:14px;padding:12px 18px}\nsummary{cursor:pointer;font-weight:500;font-family:\"Readex Pro\",sans-serif}\ndetails[open]{border-color:var(--v)}\ndetails p{margin:8px 0 0;color:var(--mute)}\n.cta{background:var(--ink);color:#fff;border-radius:24px;padding:36px 22px;text-align:center}\n.cta p{color:#c9c7ee}\n.cta form{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}\n.cta input{font:inherit;padding:11px 14px;border-radius:12px;border:0;min-width:220px;flex:1;max-width:320px}\n.ok{color:#9FFFD1;font-weight:700;min-height:1.4em;margin:10px 0 0}\nfooter{text-align:center;color:var(--mute);padding:24px;font-size:.9rem}\n@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}nav a{margin-inline-start:8px;font-size:.85rem}}\n<\/style>\n<\/head>\n<body>\n<div class=\"hero\"><div class=\"wrap\" style=\"display:block\"><nav><b>وقتي<\/b><div><a href=\"#feat\">المزايا<\/a><a href=\"#faq\">الأسئلة<\/a><a href=\"#dl\">حمّل التطبيق<\/a><\/div><\/nav><\/div>\n<div class=\"wrap\" style=\"margin-top:20px\">\n  <div><h1>رتّب يومك <span>بلمسة واحدة<\/span><\/h1><p>تطبيق عربي يجمع مهامك ومواعيدك وعاداتك في مكان واحد، بتذكيرات ذكية لا تزعجك.<\/p><a class=\"btn\" href=\"#dl\">حمّل مجانًا<\/a><\/div>\n  <div class=\"phone\" aria-hidden=\"true\"><div class=\"task done\"><i><\/i>مراجعة التقرير<\/div><div class=\"task\"><i><\/i>اجتماع الفريق 10:00<\/div><div class=\"task pk\"><i><\/i>المشي 30 دقيقة<\/div><div class=\"task\"><i><\/i>قراءة 20 صفحة<\/div><div class=\"task\"><i><\/i>شراء هدية أمي<\/div><\/div>\n<\/div><\/div>\n\n<section id=\"feat\"><div class=\"wrap\"><h2>كل ما تحتاجه ليومك<\/h2>\n <div class=\"feat\">\n  <div class=\"f\"><div class=\"ic\">✓<\/div><h3>مهام بسيطة<\/h3><p>أضف مهمة في ثوانٍ ورتبها بالسحب والإفلات.<\/p><\/div>\n  <div class=\"f\"><div class=\"ic\">⏰<\/div><h3>تذكيرات ذكية<\/h3><p>تنبيهات في الوقت المناسب وحسب موقعك.<\/p><\/div>\n  <div class=\"f\"><div class=\"ic\">↻<\/div><h3>عادات يومية<\/h3><p>تابع عاداتك وشاهد سلسلة التزامك تكبر.<\/p><\/div>\n  <div class=\"f\"><div class=\"ic\">☾<\/div><h3>وضع ليلي<\/h3><p>مريح للعين وبعدة ألوان تختار منها.<\/p><\/div>\n <\/div><\/div><\/section>\n\n<section id=\"faq\" style=\"background:#faf9ff\"><div class=\"wrap\"><h2>أسئلة شائعة<\/h2><div class=\"faq\">\n <details><summary>هل التطبيق مجاني؟<\/summary><p>نعم، النسخة الأساسية مجانية بالكامل، وتوجد نسخة مميزة اختيارية.<\/p><\/details>\n <details><summary>هل يعمل بدون إنترنت؟<\/summary><p>نعم، تعمل المهام والتذكيرات دون اتصال وتتزامن عند عودة الإنترنت.<\/p><\/details>\n <details><summary>هل يدعم اللغة العربية بالكامل؟<\/summary><p>التطبيق مصمم بالعربية من الأساس، بواجهة من اليمين لليسار.<\/p><\/details>\n <details><summary>هل بياناتي آمنة؟<\/summary><p>بياناتك مشفّرة ولا نشاركها مع أي طرف.<\/p><\/details>\n<\/div><\/div><\/section>\n\n<section id=\"dl\"><div class=\"wrap\"><div class=\"cta\"><h2 style=\"color:#fff;margin-bottom:6px\">كن من أوائل المستخدمين<\/h2><p style=\"margin:0\">اترك بريدك وسنرسل لك رابط التحميل عند الإطلاق.<\/p>\n <form id=\"f\"><input id=\"m\" type=\"email\" dir=\"ltr\" placeholder=\"بريدك الإلكتروني\" aria-label=\"البريد الإلكتروني\" required><button class=\"btn\" type=\"submit\">أبلغني<\/button><\/form><p class=\"ok\" id=\"ok\" role=\"status\"><\/p><\/div><\/div><\/section>\n<footer>© وقتي — موقع تجريبي<\/footer>\n<script>\ndocument.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').textContent='تم تسجيل بريدك، شكرًا لاهتمامك!';this.reset();};\n<\/script>\n<\/body>\n<\/html>\n"};
+  var pd=$('prevDlg'), pf=$('prevFrame');
+  grid.addEventListener('click',function(e){
+    var b=e.target.closest('[data-prev]'); if(!b) return;
+    var id=b.getAttribute('data-prev');
+    var p=CONFIG.projects.filter(function(x){return String(x.id)===id;})[0];
+    $('prevTitle').textContent=p?p.title:'';
+    pf.srcdoc=PREVIEWS[id]||'';
+    pd.showModal();
+  });
+  $('prevClose').addEventListener('click',function(){pd.close();pf.srcdoc='';});
+  pd.addEventListener('close',function(){pf.srcdoc='';});
+
+  render();
+})();
+</script>
+</body>
+</html>
